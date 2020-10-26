@@ -24,13 +24,16 @@ import com.pinterest.secor.io.FileReader;
 import com.pinterest.secor.io.FileWriter;
 import com.pinterest.secor.io.KeyValue;
 import com.pinterest.secor.util.AvroSerializer;
+import com.pinterest.secor.util.ParquetUtil;
 import junit.framework.TestCase;
 import org.apache.avro.Schema;
 import org.apache.avro.SchemaBuilder;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.generic.GenericRecordBuilder;
 import org.apache.avro.specific.SpecificDatumWriter;
+import org.apache.parquet.hadoop.ParquetWriter;
 import org.apache.hadoop.io.compress.CompressionCodec;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -45,6 +48,8 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
+
+
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({
@@ -77,6 +82,14 @@ public class AvroParquetFileReaderWriterFactoryTest extends TestCase {
     public void setUp() throws Exception {
         config = Mockito.mock(SecorConfig.class);
         when(config.getSchemaRegistryUrl()).thenReturn("test");
+        when(ParquetUtil.getParquetBlockSize(config))
+                .thenReturn(ParquetWriter.DEFAULT_BLOCK_SIZE);
+        when(ParquetUtil.getParquetPageSize(config))
+                .thenReturn(ParquetWriter.DEFAULT_PAGE_SIZE);
+        when(ParquetUtil.getParquetEnableDictionary(config))
+                .thenReturn(ParquetWriter.DEFAULT_IS_DICTIONARY_ENABLED);
+        when(ParquetUtil.getParquetValidation(config))
+                .thenReturn(ParquetWriter.DEFAULT_IS_VALIDATING_ENABLED);
 
         mFactory = new AvroParquetFileReaderWriterFactory(config);
     }

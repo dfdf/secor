@@ -113,10 +113,14 @@ public class AvroParquetFileReaderWriterFactory implements FileReaderWriterFacto
             CompressionCodecName codecName = CompressionCodecName
                     .fromCompressionCodec(codec != null ? codec.getClass() : null);
             topic = logFilePath.getTopic();
-            // Not setting blockSize, pageSize, enableDictionary, and validating
+            // Not setting blockSize, pageSize, enableDictionary, and validating =
             writer = AvroParquetWriter.builder(path)
                     .withSchema(schemaRegistry.getSchema(topic))
                     .withCompressionCodec(codecName)
+                    .withPageSize(pageSize)
+                    .withRowGroupSize(blockSize)
+                    .withDictionaryEncoding(enableDictionary)
+                    .withValidation(validating)
                     .build();
         }
 
